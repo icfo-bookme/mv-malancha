@@ -1,0 +1,86 @@
+# MV Malancha: push to main -> sync source, build, restart PM2 (port 3003).
+name: Deploy to Server
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mvmalancha-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Install SSH client
+        run: |
+          sudo apt-get -o Acquire::Retries=3 update
+          sudo apt-get -o Acquire::Retries=3 install -y openssh-client sshpass
+
+      - name: Deploy via SSH
+        timeout-minutes: 30
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          SSHPASS: ${{ secrets.VPS_PASSWORD }}
+        run: |
+          set -euo pipefail
+          : "${VPS_HOST:?Missing VPS_HOST secret}"
+          : "${VPS_USER:?Missing VPS_USER secret}"
+          : "${SSHPASS:?Missing VPS_PASSWORD secret}"
+          sshpass -e ssh -T \
+            -o StrictHostKeyChecking=accept-new \
+            -o ConnectTimeout=30 \
+            -o ServerAliveInterval=30 \
+            -o ServerAliveCountMax=6 \
+            -o PreferredAuthentications=password,keyboard-interactive \
+            -o PubkeyAuthentication=no \
+            "${VPS_USER}@${VPS_HOST}" 'bash -se' <<'DEPLOY_SCRIPT'
+            set -e
+            cd /var/www/mv-malancha
+            echo "### Server was on commit: $(git rev-parse --short HEAD)"
+            git fetch origin main
+            git reset --hard origin/main
+            echo "### Server now on commit: $(git rev-parse --short HEAD)"
+
+            if [ ! -f .env.production ]; then
+              echo "Missing /var/www/mv-malancha/.env.production"
+              exit 1
+            fi
+            if [ -f .env.local ] || [ -f .env.production.local ]; then
+              echo "Remove or rename .env.local/.env.production.local on the VPS; this project uses .env.production only."
+              exit 1
+            fi
+
+            # Use the compatible app-local runtime from previous deployments.
+            # Global Node and other apps on this VPS remain unchanged.
+            if [ -s "$HOME/.nvm/nvm.sh" ]; then
+              . "$HOME/.nvm/nvm.sh"
+            fi
+            if [ -x /var/www/mv-malancha/.runtime/node_modules/node/bin/node ]; then
+              export PATH="/var/www/mv-malancha/.runtime/node_modules/node/bin:$PATH"
+            fi
+            if ! node -e 'const [major, minor] = process.versions.node.split(".").map(Number); process.exit(major > 22 || (major === 22 && minor >= 12) ? 0 : 1)'; then
+              npm install --prefix /var/www/mv-malancha/.runtime --no-save --no-package-lock --no-audit --no-fund node@22
+              export PATH="/var/www/mv-malancha/.runtime/node_modules/node/bin:$PATH"
+            fi
+            node --version
+            npm install --no-audit --no-fund
+            npm run build
+
+            # Apply the correct cwd/runtime, including migration from releases/.
+            pm2 startOrReload ecosystem.config.cjs --only mvmalancha --update-env
+            pm2 restart mvmalancha --update-env
+            pm2 save
+            sleep 5
+            pm2 status mvmalancha
+            echo "### Health check (HTTP 200/307 expected, 000 = app not up):"
+            curl -s -o /dev/null -w "127.0.0.1:3003 -> HTTP %{http_code}\n" http://127.0.0.1:3003 || true
+          DEPLOY_SCRIPT
