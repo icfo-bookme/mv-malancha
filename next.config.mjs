@@ -6,4 +6,13 @@ if (process.env.NEXT_PUBLIC_BASE_URL) {
   const url = new URL(process.env.NEXT_PUBLIC_BASE_URL);
   remotePatterns.push({ protocol: url.protocol.slice(0, -1), hostname: url.hostname, port: url.port, pathname: '/storage/**' });
 }
-export default { images: { remotePatterns } };
+export default {
+  images: { remotePatterns },
+  async redirects() {
+    return [{
+      source: '/blog/mv-malancha-sundarbans-adventure',
+      destination: '/blog/mv-malancha-booking-and-boarding-checklist',
+      permanent: true,
+    }];
+  },
+};
