@@ -1,6 +1,7 @@
 ﻿import Image from "next/image";
 import Link from "next/link";
 import blogPosts from "@/data/blogPosts";
+import BlogContent from "./BlogContent";
 
 const BlogSection = () => (
   <section className="py-12" aria-labelledby="blog-heading">
@@ -14,7 +15,7 @@ const BlogSection = () => (
             </Link>
             <div className="flex flex-1 flex-col p-5">
               <h3 className="text-xl text-gray-950 font-semibold mb-2"><Link href={`/blog/${post.slug}`} className="hover:text-blue-800">{post.title}</Link></h3>
-              <div className="text-gray-700 text-sm leading-relaxed mb-5 [&_p]:mb-3 [&_strong]:font-bold [&_a]:text-blue-800 [&_a]:underline" dangerouslySetInnerHTML={{ __html: post.excerpt }} />
+              <BlogContent className="text-gray-700 text-sm leading-relaxed mb-5 [&_p]:mb-3 [&_strong]:font-bold [&_a]:text-blue-800 [&_a]:underline" html={post.excerpt} />
               <Link href={`/blog/${post.slug}`} className="mt-auto w-fit text-sm font-semibold text-blue-800 hover:underline" aria-label={`Read guide: ${post.title}`}>Read guide →</Link>
             </div>
           </article>

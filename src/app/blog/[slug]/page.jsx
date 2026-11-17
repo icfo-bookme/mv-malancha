@@ -1,4 +1,4 @@
-import sanitizeHtml from "sanitize-html";
+import BlogContent from "@/components/BlogSection/BlogContent";
 import Banner from "@/components/ui/Banner";
 import blogPosts from "@/data/blogPosts";
 import Image from "next/image";
@@ -42,7 +42,7 @@ export default async function BlogDetailPage({ params }) {
             className="object-cover rounded-md"
           />
         </div>
-        <div className="text-gray-800 text-lg leading-relaxed [&_h2]:mt-8 [&_h2]:mb-3 [&_h2]:text-2xl [&_h2]:font-semibold [&_p]:mb-4 [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-2 [&_a]:text-blue-800 [&_a]:underline" dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.description) }} />
+        <BlogContent className="text-gray-800 text-lg leading-relaxed [&_h2]:mt-8 [&_h2]:mb-3 [&_h2]:text-2xl [&_h2]:font-semibold [&_p]:mb-4 [&_ul]:mb-4 [&_ul]:list-disc [&_ul]:pl-6 [&_li]:mb-2 [&_a]:text-blue-800 [&_a]:underline" html={post.description} />
       </section></>
   );
 }

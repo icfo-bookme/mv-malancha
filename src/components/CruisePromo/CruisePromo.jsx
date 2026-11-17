@@ -11,8 +11,8 @@ export default function CruisePromo() {
       {/* Text Section */}
       <div className="md:w-1/2 space-y-5">
         <h2 className="text-3xl md:text-4xl font-semibold leading-snug">
-          Discover Royal Luxury <br />
-          <span className="text-red-700">Aboard MV Malancha</span>
+          Your Island Journey Begins <br />
+          <span className="text-red-700">With MV Malancha</span>
         </h2>
 
         {/* Stars */}
@@ -22,9 +22,9 @@ export default function CruisePromo() {
 
         {/* Description */}
         <p className={`${roboto.className} text-gray-700 leading-relaxed text-justify`}>
-          MV Malancha is a modern passenger and sea-cruising vessel operating along the coastal waters of the Bay of Bengal. Designed for comfort and safety, Malancha features air-conditioned seating, private cabins, an open deck for panoramic views, and onboard dining — redefining sea travel for the modern explorer.
+          Set your sights on Saint Martin&apos;s Island with MV Malancha and make the sea crossing part of your holiday. Leave the bustle of Cox&apos;sbazar behind, watch the coastline give way to open water, and look forward to time away with the people who matter most.
           <br /><br />
-          Whether you are planning a family vacation, a romantic getaway, or an adventure trip, MV Malancha ensures a memorable experience from the moment you step on board. Sail between Cox&apos;sbazar and Saint Martin&apos;s Island in comfort and style, and let the beauty of the Bay of Bengal create lasting memories.
+          Planning a couple&apos;s escape, a family outing, or a trip with friends? Explore the available ticket categories, check your preferred sailing dates, and speak with our booking team about your plans. From choosing your journey to confirming boarding details, begin your MV Malancha trip with everything clearly arranged.
         </p>
         <Link href="/get-a-call">
           <button style={{
