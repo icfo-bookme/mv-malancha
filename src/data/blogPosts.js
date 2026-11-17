@@ -76,7 +76,7 @@ const blogPosts = [
   {
     id: "3",
     slug: "mv-malancha-booking-and-boarding-checklist",
-    title: "এমভি মালঞ্চ টিকিট বুকিং ও বোর্ডিং: যাত্রার আগে করণীয়",
+    title: "এমভি মালঞ্চ অনলাইন টিকিট বুকিং: সেন্টমার্টিন ভ্রমণের প্রস্তুতি",
     language: "bn",
     subtitle: "যাত্রীর তথ্য, পেমেন্ট ও ঘাটে পৌঁছানোর প্রস্তুতি নিয়ে বাংলা নির্দেশিকা।",
     image: "/blog/mv-malancha-passenger-seating.png",
